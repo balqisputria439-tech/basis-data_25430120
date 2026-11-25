@@ -22,6 +22,7 @@ Keluhan yang menjadi pemicu: harga di nota lama tidak bisa dicek (ketua), stok d
 | PB-03 | Memesan barang ke pemasok | Petugas gudang | Stok di bawah batas minimum |
 | PB-04 | Menerima barang dari pemasok | Petugas gudang | Barang datang bersama faktur |
 | PB-05 | Menyusun laporan bulanan | Ketua koperasi | Awal bulan |
+| PB-06 | Mengelola data pemasok baru dan pembaruan kontak | Petugas gudang | Pengadaan barang dari pemasok baru |
 
 ## 3. Dokumen sumber yang dianalisis
 
@@ -35,9 +36,9 @@ Keluhan yang menjadi pemicu: harga di nota lama tidak bisa dicek (ketua), stok d
 
 | Entitas kandidat | Elemen data utama | Sumber |
 |---|---|---|
-| Anggota | nomor anggota, NIM, nama, program studi, nomor HP, status aktif | Formulir pendaftaran |
+| Anggota | nomor anggota, NIM, nama, program studi, nomor HP, status aktif, saldo poin | Formulir pendaftaran |
 | Barang | kode, nama, kategori, harga jual, stok, batas minimum stok | Daftar barang, faktur |
-| Penjualan | nomor nota, tanggal-jam, kasir, anggota (opsional), bayar | Nota penjualan |
+| Penjualan | nomor nota, tanggal-jam, kasir, anggota (opsional), bayar, poin didapat, poin ditukar | Nota penjualan |
 | Detail penjualan | nomor nota, barang, qty, harga saat transaksi | Nota penjualan |
 | Petugas | kode petugas, nama, peran (kasir/gudang/ketua) | Wawancara |
 | Pemasok | kode, nama, telepon, alamat | Faktur pemasok |
@@ -53,6 +54,8 @@ Keluhan yang menjadi pemicu: harga di nota lama tidak bisa dicek (ketua), stok d
 | AB-04 | Harga jual yang dipakai pada nota disimpan per baris dan tidak berubah meski harga barang kemudian naik. |
 | AB-05 | NIM anggota unik; pencarian anggota dapat dilakukan lewat nomor anggota atau NIM. |
 | AB-06 | Pesanan pembelian dibuat bila stok kurang dari batas minimum barang tersebut. |
+| AB-07 | Anggota aktif memperoleh 1 poin per kelipatan belanja Rp 10.000 (`FLOOR(total / 10000)`). |
+| AB-08 | Penukaran poin minimal 50 poin untuk potongan Rp 5.000 (kelipatan 50 poin) dan ditolak bila melebihi `saldo_poin` anggota. |
 
 ## 6. Kebutuhan informasi
 
@@ -62,20 +65,19 @@ Keluhan yang menjadi pemicu: harga di nota lama tidak bisa dicek (ketua), stok d
 | KI-02 | Lima barang terlaris per bulan berdasarkan qty | Detail penjualan, barang |
 | KI-03 | Barang dengan stok di bawah batas minimum | Barang |
 | KI-04 | Sepuluh anggota dengan belanja terbesar per bulan | Penjualan, detail penjualan, anggota |
+| KI-05 | Daftar anggota beserta total poin diperoleh, poin ditukar, dan sisa `saldo_poin` per bulan | Anggota, penjualan |
 
 ## 7. Matriks CRUD
 
 | Proses | Anggota | Barang | Penjualan | Detail | Pemasok | Pembelian |
 |---|---|---|---|---|---|---|
-| PB-01 Daftar anggota | C | | | | | |
-| PB-02 Catat penjualan | R | R, U | C | C | | |
+| PB-01 Daftar & kelola anggota | C, R, U | | | | | |
+| PB-02 Catat penjualan | R, U | R, U | C | C | | |
 | PB-03 Pesan ke pemasok | | R | | | R | C |
 | PB-04 Terima barang | | U | | | R | U |
 | PB-05 Laporan bulanan | R | R | R | R | | R |
+| PB-06 Kelola data pemasok | | | | | C, R, U | |
 
-> **Catatan temuan (Titik Analisis 3):** kolom Pemasok tidak punya huruf C, dan tidak ada proses yang mengubah
-> status aktif anggota. Lihat jawabanmu di laporan Pertemuan 2; perbaikan matriks ditulis di sini setelah kamu
-> memutuskannya.
 
 ## 8. Kamus data awal (cuplikan, dengan penanggung jawab)
 
@@ -87,6 +89,9 @@ Keluhan yang menjadi pemicu: harga di nota lama tidak bisa dicek (ketua), stok d
 | no_nota_penjualan | Nomor nota penjualan | PJ-2609-0142 | Unik per nota | Kasir |
 | harga_satuan_detail_penjualan | Harga jual saat transaksi | 4000 | Bilangan bulat ≥ 0 (rupiah) | Kasir |
 | stok_barang | Jumlah barang tersedia | 35 | Bilangan bulat ≥ 0 (AB-03) | Petugas gudang |
+| saldo_poin_anggota | Sisa saldo poin loyalitas anggota saat ini | 120 | Bilangan bulat >= 0 (AB-07, AB-08) | Ketua |
+| poin_didapat_penjualan | Jumlah poin yang diperoleh dari transaksi | 7 | Bilangan bulat >= 0, `FLOOR(total/10000)` | Kasir |
+| poin_ditukar_penjualan | Jumlah poin yang ditukarkan untuk potongan | 50 | Kelipatan 50, `<= saldo_poin_anggota` | Kasir |
 
 ## 9. Kebutuhan non-fungsional data
 
