@@ -1,0 +1,8 @@
+*.env
+.env
+kredensial*.txt
+kredensial*.sql
+*password*.txt
+.vscode/
+Thumbs.db
+.DS_Store
