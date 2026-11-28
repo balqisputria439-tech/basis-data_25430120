@@ -66,18 +66,13 @@ ANGGOTA (no_anggota, nim_anggota, nama_anggota, prodi_anggota, no_hp_anggota, st
 
 ## 9. Pemeriksaan BCNF per tabel
 
-> **ISI SENDIRI.** Panduan: untuk **tiap** tabel di bagian 8, tulis semua penentu (ruas kiri FD) pada tabel
-> itu, lalu tanyakan: "apakah penentu ini kunci kandidat?" (kunci kandidat = PK **atau** kolom UNIQUE).
-> Contoh pola jawaban: *"Tabel anggota: penentu id_anggota, no_anggota, nim_anggota - ketiganya kunci kandidat → BCNF."*
-> Ingat Troubleshooting 3: kunci pengganti tidak menghapus FD, jadi uji juga dengan kunci alami.
-
 | Tabel | Penentu | Kunci kandidat? | Hasil |
 |---|---|---|---|
-| petugas | ISI SENDIRI | | |
-| anggota | | | |
-| barang | | | |
-| pemasok | | | |
-| penjualan | | | |
-| detail_penjualan | | | |
-| pembelian | | | |
-| detail_pembelian | | | |
+| `petugas` | `id_petugas`, `kode_petugas` | Ya (keduanya kunci kandidat: PK dan UNIQUE) | Memenuhi BCNF |
+| `anggota` | `id_anggota`, `no_anggota`, `nim_anggota` | Ya (ketiganya kunci kandidat: PK dan kolom UNIQUE) | Memenuhi BCNF |
+| `barang` | `id_barang`, `kode_barang` | Ya (keduanya kunci kandidat: PK dan UNIQUE) | Memenuhi BCNF |
+| `pemasok` | `id_pemasok` | Ya (kunci primer / PK) | Memenuhi BCNF |
+| `penjualan` | `id_penjualan`, `no_nota_penjualan` | Ya (keduanya kunci kandidat: PK dan UNIQUE) | Memenuhi BCNF |
+| `detail_penjualan` | `(id_penjualan, id_barang)` | Ya (kunci primer komposit) | Memenuhi BCNF |
+| `pembelian` | `id_pembelian` | Ya (kunci primer / PK) | Memenuhi BCNF |
+| `detail_pembelian` | `(id_pembelian, id_barang)` | Ya (kunci primer komposit) | Memenuhi BCNF |
